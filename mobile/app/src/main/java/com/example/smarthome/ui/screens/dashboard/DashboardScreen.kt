@@ -50,7 +50,9 @@ fun DashboardScreen(
                 items(viewModel.devices) { device ->
                     DeviceCard(
                         device = device,
-                        onToggle = { /* TODO */ }
+                        onToggle = { 
+                            viewModel.toggleDevice(device)
+                        }
                     )
                 }
             }

@@ -65,7 +65,7 @@ fun DevicesScreen(
                         DeviceCard(
                             device = device,
                             onToggle = { 
-                                // TODO: Implement status toggle logic
+                                viewModel.toggleDevice(device)
                             }
                         )
                     }

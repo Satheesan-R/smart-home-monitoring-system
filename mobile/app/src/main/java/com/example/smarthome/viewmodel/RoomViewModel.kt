@@ -59,4 +59,19 @@ class RoomViewModel : ViewModel() {
             }
         )
     }
+
+    fun toggleDevice(device: Device) {
+        val newStatus = if (device.status.uppercase() == "ON") "OFF" else "ON"
+
+        deviceRepository.updateDeviceStatus(
+            deviceId = device.id,
+            status = newStatus,
+            onSuccess = {
+                // Real-time listener will update the UI
+            },
+            onError = { exception ->
+                errorMessage = exception.message
+            }
+        )
+    }
 }
