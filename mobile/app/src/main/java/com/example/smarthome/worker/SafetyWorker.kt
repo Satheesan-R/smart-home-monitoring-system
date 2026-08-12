@@ -34,10 +34,10 @@ class SafetyWorker(
 
                 if (turnedOnAt != null && maxOnDuration > 0) {
                     val onDurationSeconds = now - turnedOnAt.seconds
-                    val maxDurationSeconds = maxOnDuration * 60
+                    val maxDurationSeconds = maxOnDuration // maxOnDuration is in seconds
 
                     if (onDurationSeconds > maxDurationSeconds) {
-                        println("SAFETY: Device $deviceName exceeded max duration. Turning off.")
+                        println("SAFETY: Device $deviceName exceeded max duration ($maxDurationSeconds s). Turning off.")
                         doc.reference.update(
                             "status", "OFF",
                             "turnedOnAt", null

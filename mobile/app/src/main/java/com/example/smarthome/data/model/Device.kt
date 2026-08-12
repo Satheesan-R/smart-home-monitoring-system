@@ -14,7 +14,8 @@ data class Device(
     val maxOnDuration: Any? = null,
     val turnedOnAt: Any? = null,
     val switchCount: Int = 0,
-    val switches: List<SwitchItem> = emptyList()
+    val switches: List<SwitchItem> = emptyList(),
+    val position: DevicePosition = DevicePosition()
 ) {
     val turnedOnAtTimestamp: Timestamp?
         get() = turnedOnAt as? Timestamp

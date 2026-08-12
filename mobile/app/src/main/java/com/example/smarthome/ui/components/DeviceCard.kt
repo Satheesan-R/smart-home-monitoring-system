@@ -176,20 +176,20 @@ fun CameraContent(device: Device) {
 @Composable
 fun IronContent(device: Device, onToggle: () -> Unit) {
     Column {
-        val maxDuration = device.maxOnDurationLong
-        if (maxDuration > 0) {
-            Text(text = "Safety Cutoff: $maxDuration mins", style = MaterialTheme.typography.bodySmall)
+        val maxDurationSeconds = device.maxOnDurationLong
+        if (maxDurationSeconds > 0) {
+            Text(text = "Safety Cutoff: ${maxDurationSeconds / 60} mins", style = MaterialTheme.typography.bodySmall)
         }
         
         if (device.status.uppercase() == "ON") {
             val turnedOnAt = device.turnedOnAtTimestamp
             if (turnedOnAt != null) {
-                val durationMillis = System.currentTimeMillis() - turnedOnAt.toDate().time
-                val durationMinutes = durationMillis / (1000 * 60)
+                val elapsedSeconds = (System.currentTimeMillis() / 1000) - turnedOnAt.seconds
+                val elapsedMinutes = elapsedSeconds / 60
                 Text(
-                    text = "Running for: $durationMinutes mins", 
+                    text = "Running for: $elapsedMinutes mins", 
                     style = MaterialTheme.typography.bodySmall,
-                    color = if (durationMinutes > maxDuration && maxDuration > 0) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurfaceVariant
+                    color = if (elapsedSeconds > maxDurationSeconds && maxDurationSeconds > 0) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
         }

@@ -23,7 +23,9 @@ import androidx.navigation.navArgument
 import com.example.smarthome.data.firebase.FirebaseSeeder
 import com.example.smarthome.ui.screens.alerts.AlertsScreen
 import com.example.smarthome.ui.screens.dashboard.DashboardScreen
+import com.example.smarthome.ui.screens.devices.DeviceDetailsScreen
 import com.example.smarthome.ui.screens.devices.DevicesScreen
+import com.example.smarthome.ui.screens.floors.FloorPlanScreen
 import com.example.smarthome.ui.screens.floors.FloorScreen
 import com.example.smarthome.ui.screens.reports.ReportsScreen
 import com.example.smarthome.ui.screens.rooms.RoomScreen
@@ -87,13 +89,30 @@ fun MainScreen() {
             modifier = Modifier.padding(innerPadding)
         ) {
             composable("dashboard") {
-                DashboardScreen()
+                DashboardScreen(
+                    onDeviceClick = { deviceId ->
+                        navController.navigate("device_details/$deviceId")
+                    }
+                )
             }
             composable("floors") {
                 FloorScreen(
                     onFloorClick = { floorId, floorName ->
                         navController.navigate("rooms/$floorId/$floorName")
+                    },
+                    onViewPlanClick = { floorId ->
+                        navController.navigate("floor_plan/$floorId")
                     }
+                )
+            }
+            composable(
+                route = "floor_plan/{floorId}",
+                arguments = listOf(navArgument("floorId") { type = NavType.StringType })
+            ) { backStackEntry ->
+                val floorId = backStackEntry.arguments?.getString("floorId") ?: ""
+                FloorPlanScreen(
+                    floorId = floorId,
+                    onBackClick = { navController.popBackStack() }
                 )
             }
             composable("schedules") {
@@ -135,6 +154,19 @@ fun MainScreen() {
                 DevicesScreen(
                     roomId = roomId,
                     roomName = roomName,
+                    onBackClick = { navController.popBackStack() },
+                    onDeviceClick = { deviceId ->
+                        navController.navigate("device_details/$deviceId")
+                    }
+                )
+            }
+            composable(
+                route = "device_details/{deviceId}",
+                arguments = listOf(navArgument("deviceId") { type = NavType.StringType })
+            ) { backStackEntry ->
+                val deviceId = backStackEntry.arguments?.getString("deviceId") ?: ""
+                DeviceDetailsScreen(
+                    deviceId = deviceId,
                     onBackClick = { navController.popBackStack() }
                 )
             }

@@ -1,5 +1,6 @@
 package com.example.smarthome.ui.screens.dashboard
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -15,6 +16,7 @@ import com.example.smarthome.viewmodel.DashboardViewModel
 
 @Composable
 fun DashboardScreen(
+    onDeviceClick: (String) -> Unit,
     viewModel: DashboardViewModel = viewModel()
 ) {
 
@@ -49,19 +51,22 @@ fun DashboardScreen(
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 items(viewModel.devices) { device ->
+                    val cardModifier = Modifier.clickable { onDeviceClick(device.id) }
                     if (device.type.uppercase() == "MULTI_SWITCH") {
                         MultiSwitchCard(
                             device = device,
                             onSwitchToggle = { switchItem ->
                                 viewModel.toggleSwitch(device, switchItem)
-                            }
+                            },
+                            modifier = cardModifier
                         )
                     } else {
                         DeviceCard(
                             device = device,
                             onToggle = { 
                                 viewModel.toggleDevice(device)
-                            }
+                            },
+                            modifier = cardModifier
                         )
                     }
                 }

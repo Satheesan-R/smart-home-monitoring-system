@@ -4,6 +4,8 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Map
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -17,6 +19,7 @@ import com.example.smarthome.viewmodel.FloorViewModel
 @Composable
 fun FloorScreen(
     onFloorClick: (String, String) -> Unit,
+    onViewPlanClick: (String) -> Unit,
     viewModel: FloorViewModel = viewModel()
 ) {
     LaunchedEffect(Unit) {
@@ -48,7 +51,8 @@ fun FloorScreen(
                 items(viewModel.floors) { floor ->
                     FloorItem(
                         floor = floor,
-                        onClick = { onFloorClick(floor.id, floor.name) }
+                        onClick = { onFloorClick(floor.id, floor.name) },
+                        onViewPlan = { onViewPlanClick(floor.id) }
                     )
                 }
             }
@@ -57,24 +61,31 @@ fun FloorScreen(
 }
 
 @Composable
-fun FloorItem(floor: Floor, onClick: () -> Unit) {
+fun FloorItem(floor: Floor, onClick: () -> Unit, onViewPlan: () -> Unit) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .clickable(onClick = onClick),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
-        Column(
-            modifier = Modifier.padding(16.dp)
+        Row(
+            modifier = Modifier.padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Text(
-                text = floor.name,
-                style = MaterialTheme.typography.titleLarge
-            )
-            Text(
-                text = "Floor Number: ${floor.floorNumber ?: ""}",
-                style = MaterialTheme.typography.bodyMedium
-            )
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = floor.name,
+                    style = MaterialTheme.typography.titleLarge
+                )
+                Text(
+                    text = "Floor Number: ${floor.floorNumber ?: ""}",
+                    style = MaterialTheme.typography.bodyMedium
+                )
+            }
+            IconButton(onClick = onViewPlan) {
+                Icon(Icons.Default.Map, contentDescription = "View Plan")
+            }
         }
     }
 }

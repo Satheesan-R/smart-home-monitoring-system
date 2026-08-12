@@ -1,5 +1,6 @@
 package com.example.smarthome.ui.screens.devices
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -22,6 +23,7 @@ fun DevicesScreen(
     roomId: String,
     roomName: String,
     onBackClick: () -> Unit,
+    onDeviceClick: (String) -> Unit,
     viewModel: RoomViewModel = viewModel()
 ) {
     println("DEVICES_SCREEN: roomId=$roomId, roomName=$roomName")
@@ -64,19 +66,22 @@ fun DevicesScreen(
                     verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
                     items(viewModel.devices) { device ->
+                        val cardModifier = Modifier.clickable { onDeviceClick(device.id) }
                         if (device.type.uppercase() == "MULTI_SWITCH") {
                             MultiSwitchCard(
                                 device = device,
                                 onSwitchToggle = { switchItem ->
                                     viewModel.toggleSwitch(device, switchItem)
-                                }
+                                },
+                                modifier = cardModifier
                             )
                         } else {
                             DeviceCard(
                                 device = device,
                                 onToggle = { 
                                     viewModel.toggleDevice(device)
-                                }
+                                },
+                                modifier = cardModifier
                             )
                         }
                     }
