@@ -29,6 +29,31 @@ class DeviceRepository {
             }
     }
 
+    fun observeDevices(
+        onUpdate: (List<Device>) -> Unit,
+        onError: (Exception) -> Unit
+    ) {
+        firestore.collection("devices")
+            .addSnapshotListener { snapshot, exception ->
+                if (exception != null) {
+                    onError(exception)
+                    return@addSnapshotListener
+                }
+
+                if (snapshot != null) {
+                    val devices = snapshot.documents.mapNotNull { document ->
+                        try {
+                            document.toObject(Device::class.java)
+                                ?.copy(id = document.id)
+                        } catch (e: Exception) {
+                            null
+                        }
+                    }
+                    onUpdate(devices)
+                }
+            }
+    }
+
     fun getDevicesByRoom(
         roomId: String,
         onSuccess: (List<Device>) -> Unit,
@@ -50,6 +75,33 @@ class DeviceRepository {
             }
             .addOnFailureListener { exception ->
                 onError(exception)
+            }
+    }
+
+    fun observeDevicesByRoom(
+        roomId: String,
+        onUpdate: (List<Device>) -> Unit,
+        onError: (Exception) -> Unit
+    ) {
+        firestore.collection("devices")
+            .whereEqualTo("roomId", roomId)
+            .addSnapshotListener { snapshot, exception ->
+                if (exception != null) {
+                    onError(exception)
+                    return@addSnapshotListener
+                }
+
+                if (snapshot != null) {
+                    val devices = snapshot.documents.mapNotNull { document ->
+                        try {
+                            document.toObject(Device::class.java)
+                                ?.copy(id = document.id)
+                        } catch (e: Exception) {
+                            null
+                        }
+                    }
+                    onUpdate(devices)
+                }
             }
     }
 

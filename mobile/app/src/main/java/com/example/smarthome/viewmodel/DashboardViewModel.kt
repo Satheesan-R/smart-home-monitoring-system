@@ -21,15 +21,15 @@ class DashboardViewModel : ViewModel() {
         private set
 
     init {
-        loadDevices()
+        observeDevices()
     }
 
-    fun loadDevices() {
+    fun observeDevices() {
         isLoading = true
         errorMessage = null
 
-        repository.getDevices(
-            onSuccess = { result ->
+        repository.observeDevices(
+            onUpdate = { result ->
                 devices = result
                 isLoading = false
             },

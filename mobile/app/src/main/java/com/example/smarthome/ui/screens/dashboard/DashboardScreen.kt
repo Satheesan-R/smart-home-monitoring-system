@@ -1,12 +1,15 @@
 package com.example.smarthome.ui.screens.dashboard
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.smarthome.ui.components.DeviceCard
 import com.example.smarthome.viewmodel.DashboardViewModel
 
 @Composable
@@ -15,11 +18,13 @@ fun DashboardScreen(
 ) {
 
     LaunchedEffect(Unit) {
-        viewModel.loadDevices()
+        viewModel.observeDevices()
     }
 
     Column(
-        modifier = Modifier.padding(16.dp)
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
     ) {
 
         Text(
@@ -32,26 +37,22 @@ fun DashboardScreen(
         )
 
         if (viewModel.isLoading) {
-
             CircularProgressIndicator()
-
         } else if (viewModel.errorMessage != null) {
-
             Text(
                 text = "Error: ${viewModel.errorMessage}"
             )
-
         } else {
-
-            viewModel.devices.forEach { device ->
-
-                Text(
-                    text = "${device.name} - ${device.status}"
-                )
-
-                Spacer(
-                    modifier = Modifier.height(8.dp)
-                )
+            LazyColumn(
+                modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                items(viewModel.devices) { device ->
+                    DeviceCard(
+                        device = device,
+                        onToggle = { /* TODO */ }
+                    )
+                }
             }
         }
     }

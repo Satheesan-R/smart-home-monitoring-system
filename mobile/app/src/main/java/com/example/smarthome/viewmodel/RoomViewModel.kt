@@ -43,13 +43,13 @@ class RoomViewModel : ViewModel() {
         )
     }
 
-    fun loadDevices(roomId: String) {
+    fun observeDevices(roomId: String) {
         isLoading = true
         errorMessage = null
 
-        deviceRepository.getDevicesByRoom(
+        deviceRepository.observeDevicesByRoom(
             roomId = roomId,
-            onSuccess = { result ->
+            onUpdate = { result ->
                 devices = result
                 isLoading = false
             },

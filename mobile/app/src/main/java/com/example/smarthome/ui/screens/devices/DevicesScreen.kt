@@ -24,7 +24,7 @@ fun DevicesScreen(
     viewModel: RoomViewModel = viewModel()
 ) {
     LaunchedEffect(roomId) {
-        viewModel.loadDevices(roomId)
+        viewModel.observeDevices(roomId)
     }
 
     Scaffold(
