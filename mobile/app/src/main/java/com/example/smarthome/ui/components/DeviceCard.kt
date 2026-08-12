@@ -11,12 +11,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.layout.ContentScale
+import coil.compose.AsyncImage
 import com.example.smarthome.data.model.Device
 
 @Composable
 fun DeviceCard(
     device: Device,
     onToggle: () -> Unit,
+    onSwitchToggle: (com.example.smarthome.data.model.SwitchItem) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     val icon = when (device.type.uppercase()) {
@@ -73,7 +76,7 @@ fun DeviceCard(
             // Body: Specialized content based on device type
             when (device.type.uppercase()) {
                 "MULTI_SWITCH" -> {
-                    MultiSwitchContent(device)
+                    MultiSwitchContent(device, onSwitchToggle)
                 }
                 "CAMERA" -> {
                     CameraContent(device)
@@ -90,10 +93,11 @@ fun DeviceCard(
 }
 
 @Composable
-fun MultiSwitchContent(device: Device) {
-    device.switches?.forEach { (key, value) ->
-        val switchName = value["name"] ?: key
-        val switchStatus = value["status"] ?: "OFF"
+fun MultiSwitchContent(
+    device: Device,
+    onSwitchToggle: (com.example.smarthome.data.model.SwitchItem) -> Unit
+) {
+    device.switches.forEach { switch ->
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -101,18 +105,11 @@ fun MultiSwitchContent(device: Device) {
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(text = switchName, style = MaterialTheme.typography.bodyMedium)
-            Surface(
-                shape = MaterialTheme.shapes.small,
-                color = if (switchStatus == "ON") MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceVariant,
-                modifier = Modifier.padding(start = 8.dp)
-            ) {
-                Text(
-                    text = switchStatus,
-                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp),
-                    style = MaterialTheme.typography.labelSmall
-                )
-            }
+            Text(text = switch.name, style = MaterialTheme.typography.bodyMedium)
+            Switch(
+                checked = switch.status.uppercase() == "ON",
+                onCheckedChange = { onSwitchToggle(switch) }
+            )
         }
     }
 }
@@ -123,16 +120,53 @@ fun CameraContent(device: Device) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(120.dp)
-                .background(Color.DarkGray, MaterialTheme.shapes.medium),
+                .height(160.dp)
+                .background(Color.Black, MaterialTheme.shapes.medium),
             contentAlignment = Alignment.Center
         ) {
-            Text(text = "[ Mock Snapshot ]", color = Color.LightGray)
+            if (device.status.uppercase() == "ON" && !device.snapshotUrl.isNullOrEmpty()) {
+                AsyncImage(
+                    model = device.snapshotUrl,
+                    contentDescription = "Camera Snapshot",
+                    modifier = Modifier.fillMaxSize(),
+                    contentScale = ContentScale.Crop
+                )
+                // Overlay "LIVE" indicator
+                Surface(
+                    color = Color.Red,
+                    shape = MaterialTheme.shapes.extraSmall,
+                    modifier = Modifier
+                        .align(Alignment.TopStart)
+                        .padding(8.dp)
+                ) {
+                    Text(
+                        text = "LIVE",
+                        color = Color.White,
+                        style = MaterialTheme.typography.labelSmall,
+                        modifier = Modifier.padding(horizontal = 4.dp, vertical = 2.dp)
+                    )
+                }
+            } else {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Icon(
+                        imageVector = Icons.Default.VideocamOff,
+                        contentDescription = null,
+                        tint = Color.Gray,
+                        modifier = Modifier.size(48.dp)
+                    )
+                    Text(
+                        text = if (device.status.uppercase() == "OFF") "Camera Offline" else "No Feed Available",
+                        color = Color.LightGray,
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                }
+            }
         }
         Spacer(modifier = Modifier.height(8.dp))
         Button(
-            onClick = { /* TODO: Implement view camera */ },
-            modifier = Modifier.fillMaxWidth()
+            onClick = { /* TODO: Open full screen view */ },
+            modifier = Modifier.fillMaxWidth(),
+            enabled = device.status.uppercase() == "ON"
         ) {
             Text("View Camera")
         }
@@ -142,19 +176,32 @@ fun CameraContent(device: Device) {
 @Composable
 fun IronContent(device: Device, onToggle: () -> Unit) {
     Column {
-        device.maxOnDuration?.let {
-            Text(text = "Maximum: $it minutes", style = MaterialTheme.typography.bodySmall)
+        val maxDuration = device.maxOnDurationLong
+        if (maxDuration > 0) {
+            Text(text = "Safety Cutoff: $maxDuration mins", style = MaterialTheme.typography.bodySmall)
         }
+        
         if (device.status.uppercase() == "ON") {
-            // Logic to calculate running time would go here
-            Text(text = "Running: -- minutes", style = MaterialTheme.typography.bodySmall)
+            val turnedOnAt = device.turnedOnAtTimestamp
+            if (turnedOnAt != null) {
+                val durationMillis = System.currentTimeMillis() - turnedOnAt.toDate().time
+                val durationMinutes = durationMillis / (1000 * 60)
+                Text(
+                    text = "Running for: $durationMinutes mins", 
+                    style = MaterialTheme.typography.bodySmall,
+                    color = if (durationMinutes > maxDuration && maxDuration > 0) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
         }
+        
         Spacer(modifier = Modifier.height(8.dp))
-        Switch(
-            checked = device.status.uppercase() == "ON",
-            onCheckedChange = { onToggle() },
-            modifier = Modifier.align(Alignment.End)
-        )
+        Box(modifier = Modifier.fillMaxWidth()) {
+            Switch(
+                checked = device.status.uppercase() == "ON",
+                onCheckedChange = { onToggle() },
+                modifier = Modifier.align(Alignment.CenterEnd)
+            )
+        }
     }
 }
 

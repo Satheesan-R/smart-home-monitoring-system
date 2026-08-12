@@ -6,8 +6,11 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Assessment
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Layers
+import androidx.compose.material.icons.filled.Notifications
+import androidx.compose.material.icons.filled.Schedule
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -18,10 +21,13 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.smarthome.data.firebase.FirebaseSeeder
+import com.example.smarthome.ui.screens.alerts.AlertsScreen
 import com.example.smarthome.ui.screens.dashboard.DashboardScreen
 import com.example.smarthome.ui.screens.devices.DevicesScreen
 import com.example.smarthome.ui.screens.floors.FloorScreen
+import com.example.smarthome.ui.screens.reports.ReportsScreen
 import com.example.smarthome.ui.screens.rooms.RoomScreen
+import com.example.smarthome.ui.screens.schedules.SchedulesScreen
 import com.example.smarthome.ui.theme.SmartHomeTheme
 
 class MainActivity : ComponentActivity() {
@@ -49,32 +55,29 @@ fun MainScreen() {
     Scaffold(
         bottomBar = {
             NavigationBar {
-                NavigationBarItem(
-                    icon = { Icon(Icons.Default.Home, contentDescription = "Dashboard") },
-                    label = { Text("Dashboard") },
-                    selected = currentRoute == "dashboard",
-                    onClick = {
-                        if (currentRoute != "dashboard") {
-                            navController.navigate("dashboard") {
-                                popUpTo(navController.graph.startDestinationId)
-                                launchSingleTop = true
+                val items = listOf(
+                    Triple("dashboard", "Dashboard", Icons.Default.Home),
+                    Triple("floors", "Floors", Icons.Default.Layers),
+                    Triple("schedules", "Schedules", Icons.Default.Schedule),
+                    Triple("alerts", "Alerts", Icons.Default.Notifications),
+                    Triple("reports", "Reports", Icons.Default.Assessment)
+                )
+
+                items.forEach { (route, label, icon) ->
+                    NavigationBarItem(
+                        icon = { Icon(icon, contentDescription = label) },
+                        label = { Text(label) },
+                        selected = currentRoute == route,
+                        onClick = {
+                            if (currentRoute != route) {
+                                navController.navigate(route) {
+                                    popUpTo(navController.graph.startDestinationId)
+                                    launchSingleTop = true
+                                }
                             }
                         }
-                    }
-                )
-                NavigationBarItem(
-                    icon = { Icon(Icons.Default.Layers, contentDescription = "Floors") },
-                    label = { Text("Floors") },
-                    selected = currentRoute == "floors",
-                    onClick = {
-                        if (currentRoute != "floors") {
-                            navController.navigate("floors") {
-                                popUpTo(navController.graph.startDestinationId)
-                                launchSingleTop = true
-                            }
-                        }
-                    }
-                )
+                    )
+                }
             }
         }
     ) { innerPadding ->
@@ -92,6 +95,15 @@ fun MainScreen() {
                         navController.navigate("rooms/$floorId/$floorName")
                     }
                 )
+            }
+            composable("schedules") {
+                SchedulesScreen()
+            }
+            composable("alerts") {
+                AlertsScreen()
+            }
+            composable("reports") {
+                ReportsScreen()
             }
             composable(
                 route = "rooms/{floorId}/{floorName}",

@@ -13,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.smarthome.ui.components.DeviceCard
+import com.example.smarthome.ui.components.MultiSwitchCard
 import com.example.smarthome.viewmodel.RoomViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -23,6 +24,7 @@ fun DevicesScreen(
     onBackClick: () -> Unit,
     viewModel: RoomViewModel = viewModel()
 ) {
+    println("DEVICES_SCREEN: roomId=$roomId, roomName=$roomName")
     LaunchedEffect(roomId) {
         viewModel.observeDevices(roomId)
     }
@@ -62,12 +64,21 @@ fun DevicesScreen(
                     verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
                     items(viewModel.devices) { device ->
-                        DeviceCard(
-                            device = device,
-                            onToggle = { 
-                                viewModel.toggleDevice(device)
-                            }
-                        )
+                        if (device.type.uppercase() == "MULTI_SWITCH") {
+                            MultiSwitchCard(
+                                device = device,
+                                onSwitchToggle = { switchItem ->
+                                    viewModel.toggleSwitch(device, switchItem)
+                                }
+                            )
+                        } else {
+                            DeviceCard(
+                                device = device,
+                                onToggle = { 
+                                    viewModel.toggleDevice(device)
+                                }
+                            )
+                        }
                     }
                 }
             }

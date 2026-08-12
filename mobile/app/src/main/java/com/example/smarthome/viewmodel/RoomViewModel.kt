@@ -74,4 +74,23 @@ class RoomViewModel : ViewModel() {
             }
         )
     }
+
+    fun toggleSwitch(device: Device, switchItem: com.example.smarthome.data.model.SwitchItem) {
+        val updatedSwitches = device.switches.map {
+            if (it.id == switchItem.id) {
+                it.copy(status = if (it.status.uppercase() == "ON") "OFF" else "ON")
+            } else {
+                it
+            }
+        }
+
+        deviceRepository.updateMultiSwitchStatus(
+            deviceId = device.id,
+            switches = updatedSwitches,
+            onSuccess = { },
+            onError = { exception ->
+                errorMessage = exception.message
+            }
+        )
+    }
 }

@@ -1,10 +1,12 @@
 package com.example.smarthome.data.firebase
 
 import com.example.smarthome.data.model.Device
+import com.example.smarthome.data.model.SwitchItem
 import com.google.firebase.firestore.FirebaseFirestore
 
 object FirebaseSeeder {
     fun seedData() {
+        println("SEEDER: Starting seeding...")
         val firestore = FirebaseFirestore.getInstance()
         
         firestore.collection("rooms").get().addOnSuccessListener { roomsSnapshot ->
@@ -24,42 +26,57 @@ object FirebaseSeeder {
                         type = "MULTI_SWITCH",
                         status = "ON",
                         roomId = livingRoomId,
-                        switches = mapOf(
-                            "switch1" to mapOf("name" to "Main Light", "status" to "OFF"),
-                            "switch2" to mapOf("name" to "Fan", "status" to "ON"),
-                            "switch3" to mapOf("name" to "Lamp", "status" to "OFF")
+                        switchCount = 3,
+                        switches = listOf(
+                            SwitchItem(id = "switch1", name = "Main Light", status = "OFF"),
+                            SwitchItem(id = "switch2", name = "Fan", status = "ON"),
+                            SwitchItem(id = "switch3", name = "Lamp", status = "OFF")
                         )
                     ),
                     Device(
                         name = "Living Room Camera",
                         type = "CAMERA",
                         status = "ON",
-                        roomId = livingRoomId
+                        roomId = livingRoomId,
+                        snapshotUrl = "https://picsum.photos/id/237/400/300"
                     ),
                     Device(
-                        name = "Study Room Switch",
+                        name = "study_switch_01",
                         type = "MULTI_SWITCH",
                         status = "OFF",
                         roomId = studyRoomId,
-                        switches = mapOf(
-                            "switch1" to mapOf("name" to "Desk Lamp", "status" to "OFF"),
-                            "switch2" to mapOf("name" to "Computer", "status" to "OFF")
+                        switchCount = 2,
+                        switches = listOf(
+                            SwitchItem(id = "switch_1", name = "Light", status = "OFF"),
+                            SwitchItem(id = "switch_2", name = "Fan", status = "OFF")
                         )
+                    ),
+                    Device(
+                        name = "Master Bedroom Iron",
+                        type = "IRON",
+                        status = "OFF",
+                        roomId = livingRoomId,
+                        maxOnDuration = 30
                     )
                 )
 
                 devices.forEach { device ->
-                    firestore.collection("devices")
-                        .whereEqualTo("name", device.name)
-                        .whereEqualTo("roomId", device.roomId)
-                        .get()
-                        .addOnSuccessListener { existing ->
-                            if (existing.isEmpty) {
-                                firestore.collection("devices").add(device)
-                            }
+                    // Use a slugified name as the document ID (e.g., "living_room_light")
+                    val documentId = device.name.lowercase().replace(" ", "_")
+                    
+                    firestore.collection("devices").document(documentId).set(device)
+                        .addOnSuccessListener { 
+                            println("SEEDER: Successfully seeded ${device.name} as $documentId") 
+                        }
+                        .addOnFailureListener { e ->
+                            println("SEEDER: Error seeding ${device.name}: ${e.message}")
                         }
                 }
+            } else {
+                println("SEEDER: Could not find required rooms for seeding")
             }
+        }.addOnFailureListener {
+            println("SEEDER: Failed to fetch rooms: ${it.message}")
         }
     }
 }

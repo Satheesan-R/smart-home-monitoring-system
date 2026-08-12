@@ -10,6 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.smarthome.ui.components.DeviceCard
+import com.example.smarthome.ui.components.MultiSwitchCard
 import com.example.smarthome.viewmodel.DashboardViewModel
 
 @Composable
@@ -48,12 +49,21 @@ fun DashboardScreen(
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 items(viewModel.devices) { device ->
-                    DeviceCard(
-                        device = device,
-                        onToggle = { 
-                            viewModel.toggleDevice(device)
-                        }
-                    )
+                    if (device.type.uppercase() == "MULTI_SWITCH") {
+                        MultiSwitchCard(
+                            device = device,
+                            onSwitchToggle = { switchItem ->
+                                viewModel.toggleSwitch(device, switchItem)
+                            }
+                        )
+                    } else {
+                        DeviceCard(
+                            device = device,
+                            onToggle = { 
+                                viewModel.toggleDevice(device)
+                            }
+                        )
+                    }
                 }
             }
         }

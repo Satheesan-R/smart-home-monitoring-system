@@ -83,23 +83,28 @@ class DeviceRepository {
         onUpdate: (List<Device>) -> Unit,
         onError: (Exception) -> Unit
     ) {
+        println("REPOSITORY: Observing devices for room: $roomId")
         firestore.collection("devices")
             .whereEqualTo("roomId", roomId)
             .addSnapshotListener { snapshot, exception ->
                 if (exception != null) {
+                    println("REPOSITORY: Error observing devices: ${exception.message}")
                     onError(exception)
                     return@addSnapshotListener
                 }
 
                 if (snapshot != null) {
+                    println("REPOSITORY: Snapshot found with ${snapshot.size()} documents")
                     val devices = snapshot.documents.mapNotNull { document ->
                         try {
                             document.toObject(Device::class.java)
                                 ?.copy(id = document.id)
                         } catch (e: Exception) {
+                            println("REPOSITORY: Deserialization error for doc ${document.id}: ${e.message}")
                             null
                         }
                     }
+                    println("REPOSITORY: Successfully mapped ${devices.size} devices")
                     onUpdate(devices)
                 }
             }
@@ -111,8 +116,30 @@ class DeviceRepository {
         onSuccess: () -> Unit,
         onError: (Exception) -> Unit
     ) {
+        val updates = mutableMapOf<String, Any?>(
+            "status" to status
+        )
+        
+        if (status.uppercase() == "ON") {
+            updates["turnedOnAt"] = com.google.firebase.firestore.FieldValue.serverTimestamp()
+        } else {
+            updates["turnedOnAt"] = null
+        }
+
         firestore.collection("devices").document(deviceId)
-            .update("status", status)
+            .update(updates)
+            .addOnSuccessListener { onSuccess() }
+            .addOnFailureListener { onError(it) }
+    }
+
+    fun updateMultiSwitchStatus(
+        deviceId: String,
+        switches: List<com.example.smarthome.data.model.SwitchItem>,
+        onSuccess: () -> Unit,
+        onError: (Exception) -> Unit
+    ) {
+        firestore.collection("devices").document(deviceId)
+            .update("switches", switches)
             .addOnSuccessListener { onSuccess() }
             .addOnFailureListener { onError(it) }
     }
