@@ -15,8 +15,36 @@ class DeviceRepository {
             .get()
             .addOnSuccessListener { result ->
                 val devices = result.documents.mapNotNull { document ->
-                    document.toObject(Device::class.java)
-                        ?.copy(id = document.id)
+                    try {
+                        document.toObject(Device::class.java)
+                            ?.copy(id = document.id)
+                    } catch (e: Exception) {
+                        null
+                    }
+                }
+                onSuccess(devices)
+            }
+            .addOnFailureListener { exception ->
+                onError(exception)
+            }
+    }
+
+    fun getDevicesByRoom(
+        roomId: String,
+        onSuccess: (List<Device>) -> Unit,
+        onError: (Exception) -> Unit
+    ) {
+        firestore.collection("devices")
+            .whereEqualTo("roomId", roomId)
+            .get()
+            .addOnSuccessListener { result ->
+                val devices = result.documents.mapNotNull { document ->
+                    try {
+                        document.toObject(Device::class.java)
+                            ?.copy(id = document.id)
+                    } catch (e: Exception) {
+                        null
+                    }
                 }
                 onSuccess(devices)
             }

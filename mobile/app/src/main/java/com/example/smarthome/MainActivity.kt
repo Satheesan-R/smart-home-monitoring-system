@@ -17,7 +17,9 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.example.smarthome.data.firebase.FirebaseSeeder
 import com.example.smarthome.ui.screens.dashboard.DashboardScreen
+import com.example.smarthome.ui.screens.devices.DevicesScreen
 import com.example.smarthome.ui.screens.floors.FloorScreen
 import com.example.smarthome.ui.screens.rooms.RoomScreen
 import com.example.smarthome.ui.theme.SmartHomeTheme
@@ -26,6 +28,10 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        
+        // Seed data once to ensure required devices exist
+        FirebaseSeeder.seedData()
+
         setContent {
             SmartHomeTheme {
                 MainScreen()
@@ -99,6 +105,24 @@ fun MainScreen() {
                 RoomScreen(
                     floorId = floorId,
                     floorName = floorName,
+                    onBackClick = { navController.popBackStack() },
+                    onRoomClick = { roomId, roomName ->
+                        navController.navigate("devices/$roomId/$roomName")
+                    }
+                )
+            }
+            composable(
+                route = "devices/{roomId}/{roomName}",
+                arguments = listOf(
+                    navArgument("roomId") { type = NavType.StringType },
+                    navArgument("roomName") { type = NavType.StringType }
+                )
+            ) { backStackEntry ->
+                val roomId = backStackEntry.arguments?.getString("roomId") ?: ""
+                val roomName = backStackEntry.arguments?.getString("roomName") ?: ""
+                DevicesScreen(
+                    roomId = roomId,
+                    roomName = roomName,
                     onBackClick = { navController.popBackStack() }
                 )
             }

@@ -15,8 +15,12 @@ class FloorRepository {
             .get()
             .addOnSuccessListener { result ->
                 val floors = result.documents.mapNotNull { document ->
-                    document.toObject(Floor::class.java)
-                        ?.copy(id = document.id)
+                    try {
+                        document.toObject(Floor::class.java)
+                            ?.copy(id = document.id)
+                    } catch (e: Exception) {
+                        null
+                    }
                 }
                 onSuccess(floors)
             }

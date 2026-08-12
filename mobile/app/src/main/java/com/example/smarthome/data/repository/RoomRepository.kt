@@ -17,8 +17,12 @@ class RoomRepository {
             .get()
             .addOnSuccessListener { result ->
                 val rooms = result.documents.mapNotNull { document ->
-                    document.toObject(Room::class.java)
-                        ?.copy(id = document.id)
+                    try {
+                        document.toObject(Room::class.java)
+                            ?.copy(id = document.id)
+                    } catch (e: Exception) {
+                        null
+                    }
                 }
                 onSuccess(rooms)
             }
