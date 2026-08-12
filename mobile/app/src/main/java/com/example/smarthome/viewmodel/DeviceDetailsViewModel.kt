@@ -70,6 +70,22 @@ class DeviceDetailsViewModel : ViewModel() {
         }
     }
 
+    fun updateSchedule(enabled: Boolean, startTime: String, endTime: String) {
+        device?.let { currentDevice ->
+            val newSchedule = com.example.smarthome.data.model.DeviceSchedule(
+                enabled = enabled,
+                startTime = startTime,
+                endTime = endTime
+            )
+            repository.updateDeviceSchedule(
+                deviceId = currentDevice.id,
+                schedule = newSchedule,
+                onSuccess = {},
+                onError = { errorMessage = it.message }
+            )
+        }
+    }
+
     override fun onCleared() {
         super.onCleared()
         listener?.remove()

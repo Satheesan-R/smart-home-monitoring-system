@@ -2,6 +2,7 @@ package com.example.smarthome.data.firebase
 
 import com.example.smarthome.data.model.Device
 import com.example.smarthome.data.model.DevicePosition
+import com.example.smarthome.data.model.DeviceSchedule
 import com.example.smarthome.data.model.Floor
 import com.example.smarthome.data.model.Room
 import com.example.smarthome.data.model.SwitchItem
@@ -43,7 +44,12 @@ object FirebaseSeeder {
                                 status = "OFF",
                                 roomId = bedroomId,
                                 floorId = firstFloorId,
-                                position = DevicePosition(0.2f, 0.2f)
+                                position = DevicePosition(0.2f, 0.2f),
+                                schedule = DeviceSchedule(
+                                    enabled = true,
+                                    startTime = "18:00",
+                                    endTime = "22:00"
+                                )
                             ),
                             Device(
                                 name = "Bedroom Iron",

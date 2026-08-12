@@ -8,8 +8,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -60,7 +59,8 @@ fun DeviceDetailsScreen(
                 DeviceDetailsContent(
                     device = device,
                     onToggle = { viewModel.toggleDevice() },
-                    onSwitchToggle = { viewModel.toggleSwitch(it) }
+                    onSwitchToggle = { viewModel.toggleSwitch(it) },
+                    onScheduleSave = { enabled, start, end -> viewModel.updateSchedule(enabled, start, end) }
                 )
             } else if (viewModel.errorMessage != null) {
                 Text(
@@ -77,7 +77,8 @@ fun DeviceDetailsScreen(
 fun DeviceDetailsContent(
     device: Device,
     onToggle: () -> Unit,
-    onSwitchToggle: (com.example.smarthome.data.model.SwitchItem) -> Unit
+    onSwitchToggle: (com.example.smarthome.data.model.SwitchItem) -> Unit,
+    onScheduleSave: (Boolean, String, String) -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -133,8 +134,82 @@ fun DeviceDetailsContent(
             "MULTI_SWITCH" -> MultiSwitchUI(device, onSwitchToggle)
             "CAMERA" -> CameraUI(device)
             "IRON" -> IronUI(device, onToggle)
-            "LIGHT", "OUTLET" -> NormalDeviceUI(device, onToggle)
+            "LIGHT" -> LightUI(device, onToggle, onScheduleSave = onScheduleSave)
+            "OUTLET" -> NormalDeviceUI(device, onToggle)
             else -> NormalDeviceUI(device, onToggle)
+        }
+    }
+}
+
+@Composable
+fun LightUI(
+    device: Device,
+    onToggle: () -> Unit,
+    onScheduleSave: (Boolean, String, String) -> Unit
+) {
+    var scheduleEnabled by remember(device.schedule.enabled) { mutableStateOf(device.schedule.enabled) }
+    var startTime by remember(device.schedule.startTime) { mutableStateOf(device.schedule.startTime) }
+    var endTime by remember(device.schedule.endTime) { mutableStateOf(device.schedule.endTime) }
+
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        NormalDeviceUI(device, onToggle)
+        
+        Spacer(modifier = Modifier.height(32.dp))
+        
+        HorizontalDivider()
+        
+        Spacer(modifier = Modifier.height(24.dp))
+        
+        Text(
+            text = "Schedule",
+            style = MaterialTheme.typography.titleLarge,
+            modifier = Modifier.align(Alignment.Start)
+        )
+        
+        Spacer(modifier = Modifier.height(16.dp))
+        
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text("Automatic", style = MaterialTheme.typography.bodyLarge)
+            Switch(
+                checked = scheduleEnabled,
+                onCheckedChange = { scheduleEnabled = it }
+            )
+        }
+        
+        Spacer(modifier = Modifier.height(16.dp))
+        
+        OutlinedTextField(
+            value = startTime,
+            onValueChange = { startTime = it },
+            label = { Text("Start Time (e.g. 18:00)") },
+            modifier = Modifier.fillMaxWidth(),
+            enabled = scheduleEnabled
+        )
+        
+        Spacer(modifier = Modifier.height(8.dp))
+        
+        OutlinedTextField(
+            value = endTime,
+            onValueChange = { endTime = it },
+            label = { Text("End Time (e.g. 22:00)") },
+            modifier = Modifier.fillMaxWidth(),
+            enabled = scheduleEnabled
+        )
+        
+        Spacer(modifier = Modifier.height(16.dp))
+        
+        Button(
+            onClick = { onScheduleSave(scheduleEnabled, startTime, endTime) },
+            modifier = Modifier.fillMaxWidth(),
+            enabled = (scheduleEnabled != device.schedule.enabled || 
+                      startTime != device.schedule.startTime || 
+                      endTime != device.schedule.endTime)
+        ) {
+            Text("SAVE SCHEDULE")
         }
     }
 }

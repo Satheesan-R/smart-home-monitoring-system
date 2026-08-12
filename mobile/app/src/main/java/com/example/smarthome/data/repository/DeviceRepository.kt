@@ -144,6 +144,18 @@ class DeviceRepository {
             .addOnFailureListener { onError(it) }
     }
 
+    fun updateDeviceSchedule(
+        deviceId: String,
+        schedule: com.example.smarthome.data.model.DeviceSchedule,
+        onSuccess: () -> Unit,
+        onError: (Exception) -> Unit
+    ) {
+        firestore.collection("devices").document(deviceId)
+            .update("schedule", schedule)
+            .addOnSuccessListener { onSuccess() }
+            .addOnFailureListener { onError(it) }
+    }
+
     fun addDevice(
         device: Device,
         onSuccess: (String) -> Unit,
