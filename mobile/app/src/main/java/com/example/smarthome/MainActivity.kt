@@ -23,11 +23,12 @@ import androidx.navigation.navArgument
 import com.example.smarthome.data.firebase.FirebaseSeeder
 import com.example.smarthome.ui.screens.alerts.AlertsScreen
 import com.example.smarthome.ui.screens.dashboard.DashboardScreen
+import com.example.smarthome.ui.screens.devices.CameraScreen
 import com.example.smarthome.ui.screens.devices.DeviceDetailsScreen
 import com.example.smarthome.ui.screens.devices.DevicesScreen
 import com.example.smarthome.ui.screens.floors.FloorPlanScreen
 import com.example.smarthome.ui.screens.floors.FloorScreen
-import com.example.smarthome.ui.screens.reports.ReportsScreen
+import com.example.smarthome.ui.screens.reports.UsageScreen
 import com.example.smarthome.ui.screens.rooms.RoomScreen
 import com.example.smarthome.ui.screens.schedules.SchedulesScreen
 import com.example.smarthome.ui.theme.SmartHomeTheme
@@ -122,7 +123,7 @@ fun MainScreen() {
                 AlertsScreen()
             }
             composable("reports") {
-                ReportsScreen()
+                UsageScreen()
             }
             composable(
                 route = "rooms/{floorId}/{floorName}",
@@ -166,6 +167,17 @@ fun MainScreen() {
             ) { backStackEntry ->
                 val deviceId = backStackEntry.arguments?.getString("deviceId") ?: ""
                 DeviceDetailsScreen(
+                    deviceId = deviceId,
+                    onBackClick = { navController.popBackStack() },
+                    onViewCameraClick = { id -> navController.navigate("camera_view/$id") }
+                )
+            }
+            composable(
+                route = "camera_view/{deviceId}",
+                arguments = listOf(navArgument("deviceId") { type = NavType.StringType })
+            ) { backStackEntry ->
+                val deviceId = backStackEntry.arguments?.getString("deviceId") ?: ""
+                CameraScreen(
                     deviceId = deviceId,
                     onBackClick = { navController.popBackStack() }
                 )

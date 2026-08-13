@@ -18,6 +18,8 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import com.example.smarthome.data.model.Device
+import com.example.smarthome.ui.components.DeviceStatus
+import com.example.smarthome.ui.components.getStatusColor
 import com.example.smarthome.viewmodel.DeviceDetailsViewModel
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -28,6 +30,7 @@ import java.util.Locale
 fun DeviceDetailsScreen(
     deviceId: String,
     onBackClick: () -> Unit,
+    onViewCameraClick: (String) -> Unit,
     viewModel: DeviceDetailsViewModel = viewModel()
 ) {
     LaunchedEffect(deviceId) {
@@ -60,7 +63,8 @@ fun DeviceDetailsScreen(
                     device = device,
                     onToggle = { viewModel.toggleDevice() },
                     onSwitchToggle = { viewModel.toggleSwitch(it) },
-                    onScheduleSave = { enabled, start, end -> viewModel.updateSchedule(enabled, start, end) }
+                    onScheduleSave = { enabled, start, end -> viewModel.updateSchedule(enabled, start, end) },
+                    onViewCameraClick = { onViewCameraClick(device.id) }
                 )
             } else if (viewModel.errorMessage != null) {
                 Text(
@@ -78,7 +82,8 @@ fun DeviceDetailsContent(
     device: Device,
     onToggle: () -> Unit,
     onSwitchToggle: (com.example.smarthome.data.model.SwitchItem) -> Unit,
-    onScheduleSave: (Boolean, String, String) -> Unit
+    onScheduleSave: (Boolean, String, String) -> Unit,
+    onViewCameraClick: () -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -88,8 +93,7 @@ fun DeviceDetailsContent(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         val type = device.type.uppercase()
-        val isOn = device.status.uppercase() == "ON"
-        val statusColor = if (isOn) MaterialTheme.colorScheme.primary else Color.Gray
+        val statusColor = getStatusColor(device.status)
 
         // 1. Device Icon/Graphic
         Box(
@@ -121,18 +125,14 @@ fun DeviceDetailsContent(
             style = MaterialTheme.typography.headlineMedium,
             fontWeight = FontWeight.Bold
         )
-        Text(
-            text = "Status: ${device.status.uppercase()}",
-            style = MaterialTheme.typography.titleMedium,
-            color = statusColor
-        )
+        DeviceStatus(status = device.status)
 
         Spacer(modifier = Modifier.height(32.dp))
 
         // 3. Specialized Content
         when (type) {
             "MULTI_SWITCH" -> MultiSwitchUI(device, onSwitchToggle)
-            "CAMERA" -> CameraUI(device)
+            "CAMERA" -> CameraUI(device, onViewCameraClick)
             "IRON" -> IronUI(device, onToggle)
             "LIGHT" -> LightUI(device, onToggle, onScheduleSave = onScheduleSave)
             "OUTLET" -> NormalDeviceUI(device, onToggle)
@@ -316,7 +316,7 @@ fun MultiSwitchUI(
 }
 
 @Composable
-fun CameraUI(device: Device) {
+fun CameraUI(device: Device, onViewCameraClick: () -> Unit) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Box(
             modifier = Modifier
@@ -338,7 +338,7 @@ fun CameraUI(device: Device) {
         }
         Spacer(modifier = Modifier.height(16.dp))
         Button(
-            onClick = { /* TODO: Full screen */ },
+            onClick = onViewCameraClick,
             modifier = Modifier.fillMaxWidth().height(56.dp),
             enabled = device.status.uppercase() == "ON"
         ) {

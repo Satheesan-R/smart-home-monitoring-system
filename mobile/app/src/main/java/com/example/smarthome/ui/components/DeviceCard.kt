@@ -14,6 +14,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.layout.ContentScale
 import coil.compose.AsyncImage
 import com.example.smarthome.data.model.Device
+import com.example.smarthome.ui.components.DeviceStatus
 
 @Composable
 fun DeviceCard(
@@ -31,13 +32,7 @@ fun DeviceCard(
         else -> Icons.Default.Devices
     }
 
-    val statusColor = when (device.status.uppercase()) {
-        "ON" -> MaterialTheme.colorScheme.primary
-        "OFF" -> MaterialTheme.colorScheme.secondary
-        "ERROR" -> MaterialTheme.colorScheme.error
-        "DISCONNECTED" -> Color.Gray
-        else -> MaterialTheme.colorScheme.onSurfaceVariant
-    }
+    val statusColor = getStatusColor(device.status)
 
     Card(
         modifier = modifier.fillMaxWidth(),
@@ -64,11 +59,7 @@ fun DeviceCard(
                         fontWeight = FontWeight.Bold
                     )
                 }
-                Text(
-                    text = device.status.uppercase(),
-                    style = MaterialTheme.typography.labelLarge,
-                    color = statusColor
-                )
+                DeviceStatus(status = device.status)
             }
 
             Spacer(modifier = Modifier.height(12.dp))

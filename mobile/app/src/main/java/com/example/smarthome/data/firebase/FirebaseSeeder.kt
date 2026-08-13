@@ -4,14 +4,51 @@ import com.example.smarthome.data.model.Device
 import com.example.smarthome.data.model.DevicePosition
 import com.example.smarthome.data.model.DeviceSchedule
 import com.example.smarthome.data.model.Floor
+import com.example.smarthome.data.model.UsageRecord
 import com.example.smarthome.data.model.Room
 import com.example.smarthome.data.model.SwitchItem
 import com.google.firebase.firestore.FirebaseFirestore
+import java.text.SimpleDateFormat
+import java.util.*
 
 object FirebaseSeeder {
     fun seedData() {
         println("SEEDER: Starting seeding...")
         val firestore = FirebaseFirestore.getInstance()
+
+        val today = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
+
+        // 0. Seed Usage Data
+        val usageData = listOf(
+            UsageRecord(
+                deviceId = "bedroom_iron",
+                deviceName = "Bedroom Iron",
+                deviceType = "IRON",
+                date = today,
+                totalSeconds = 2520,
+                sessions = 3
+            ),
+            UsageRecord(
+                deviceId = "bedroom_light",
+                deviceName = "Bedroom Light",
+                deviceType = "LIGHT",
+                date = today,
+                totalSeconds = 19200, // 5h 20m
+                sessions = 0
+            ),
+            UsageRecord(
+                deviceId = "bedroom_outlet",
+                deviceName = "Bedroom Outlet",
+                deviceType = "OUTLET",
+                date = today,
+                totalSeconds = 11400, // 3h 10m
+                sessions = 0
+            )
+        )
+
+        usageData.forEach { record ->
+            firestore.collection("usage").document("${record.deviceId}_$today").set(record)
+        }
 
         // 1. Seed Floors
         val groundFloorId = "ground_floor"
@@ -110,6 +147,22 @@ object FirebaseSeeder {
                                 roomId = kitchenId,
                                 floorId = groundFloorId,
                                 position = DevicePosition(0.6f, 0.6f)
+                            ),
+                            Device(
+                                name = "kitchen_fridge",
+                                type = "OUTLET",
+                                status = "DISCONNECTED",
+                                roomId = kitchenId,
+                                floorId = groundFloorId,
+                                position = DevicePosition(0.9f, 0.5f)
+                            ),
+                            Device(
+                                name = "kitchen_toaster",
+                                type = "OUTLET",
+                                status = "ERROR",
+                                roomId = kitchenId,
+                                floorId = groundFloorId,
+                                position = DevicePosition(0.7f, 0.2f)
                             )
                         )
 
