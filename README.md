@@ -1,154 +1,191 @@
-# Smart Home Monitoring & Control System
+# 🏠 Smart Home Monitoring & Control System
 
-> SCS 3311 – Mobile Application Design & Development  
-> University Mini Project
+> 📚 **SCS 3311 – Mobile Application Design & Development**
+> 🎓 **University Mini Project**
 
-A smart-home monitoring and control system built around a shared Firebase / Firestore backend. The project focuses on monitoring and controlling smart devices across multiple floors and rooms, with a web-based simulator representing the physical smart-home environment.
+A smart-home monitoring and control system built around a shared **Firebase / Firestore backend**. The project focuses on monitoring and controlling smart devices across multiple floors and rooms, with a **web-based hardware simulator** representing the physical smart-home environment.
 
 ---
 
-## Project Overview
+## 📖 Project Overview
 
-This system allows users to monitor and control smart-home devices in real time through a cloud-connected architecture.
+This system allows users to **monitor and control smart-home devices in real time** through a cloud-connected architecture.
 
-The repository currently contains the web simulator component, which communicates with Firebase Firestore to mirror device state changes and simulate real smart-home hardware behavior.
+The repository currently contains the **Web Hardware Simulator**, which communicates with Firebase Firestore to mirror device state changes and simulate real smart-home hardware behavior.
 
-### System Architecture
+### 🏗️ System Architecture
 
 ```text
-       📱 Android App (optional/client app)
-                 ↓
-          ☁️ Firebase / Firestore
-                 ↓
-       🖥️ Web Hardware Simulator
+        📱 Android App
+             │
+             ▼
+      ☁️ Firebase / Firestore
+             │
+             ▼
+    🖥️ Web Hardware Simulator
 ```
 
-Both the mobile client and the simulator use the same Firebase backend, allowing synchronized state updates without direct app-to-app communication.
+Both the mobile client and simulator use the **same Firebase backend**, allowing synchronized state updates without direct app-to-app communication.
 
 ---
 
-## Main Features
+## ✨ Main Features
 
-### Multi-floor smart home layout
-- Multiple floors supported
-- Ground Floor and First Floor included
-- Rooms grouped under each floor
-- Devices represented in a floor-based dashboard
+### 🏢 Multi-Floor Smart Home
 
-### Device control
+* 🏠 Multiple floors supported
+* ⬇️ Ground Floor
+* ⬆️ First Floor
+* 🚪 Rooms grouped under each floor
+* 📱 Floor-based device dashboard
+
+### 🎛️ Device Control
+
 Supported device types include:
-- Lights
-- Electrical outlets
-- Multi-switch units
-- Safety-critical iron
-- Security cameras
 
-### Device state management
+* 💡 Lights
+* 🔌 Electrical outlets
+* 🎚️ Multi-switch units
+* 🔥 Safety-critical iron
+* 📹 Security cameras
+
+### 🔄 Device State Management
+
 Each device can be in one of the following states:
-- ON
-- OFF
-- ERROR
-- DISCONNECTED
 
-### Multi-switch control
-A single physical switch unit may include multiple switches, each independently controllable.
+| Status             | Meaning                |
+| ------------------ | ---------------------- |
+| 🟢 **ON**          | Device is active       |
+| ⚪ **OFF**          | Device is inactive     |
+| 🔴 **ERROR**       | Device has an error    |
+| ⚫ **DISCONNECTED** | Device is disconnected |
+
+### 🎚️ Multi-Switch Control
+
+A single physical switch unit may contain multiple independently controllable switches.
 
 Example:
-- Main light
-- Fan
-- Lamp
 
-Each switch keeps its own state and does not reset the others.
+* 💡 Main Light
+* 🌀 Fan
+* 🛋️ Lamp
 
-### Iron safety management
-The iron is treated as a safety-critical device and supports:
-- Maximum ON duration
-- Turned-on timestamp tracking
-- Automatic cutoff after timeout
-- Status update to OFF
-- Safety alert generation
+Each switch maintains its own state without affecting the other switches.
 
-### Scheduling
-Some lights can include scheduled start and stop times for automatic operation.
+### 🔥 Iron Safety Management
 
-### Security camera simulation
-A mock camera implementation is used to simulate:
-- ONLINE
-- OFFLINE
-- DISCONNECTED
+The iron is treated as a **safety-critical device** and supports:
 
----
+* ⏱️ Maximum ON duration
+* 🕐 Turned-on timestamp tracking
+* 🛑 Automatic cutoff after timeout
+* ⚪ Automatic status update to OFF
+* 🚨 Safety alert generation
 
-## Web Hardware Simulator
+### ⏰ Scheduling
 
-The simulator represents the physical smart-home hardware and performs the following roles:
-- Reads device states from Firestore
-- Displays current device status
-- Simulates physical changes to hardware devices
-- Writes updated states back to Firebase
-- Tests the synchronization flow between the client and cloud backend
+Some lights can include scheduled:
 
-This repository includes the frontend simulator built with React + Vite.
+* ▶️ Start time
+* ⏹️ Stop time
+* 🔄 Automatic operation
+
+### 📹 Security Camera Simulation
+
+The mock camera implementation supports:
+
+* 🟢 ONLINE
+* ⚪ OFFLINE
+* ⚫ DISCONNECTED
 
 ---
 
-## Technologies Used
+## 🖥️ Web Hardware Simulator
 
-### Web simulator
-- React
-- JavaScript
-- HTML
-- CSS
-- Vite
-- Firebase / Firestore
+The simulator represents the **physical smart-home hardware**.
 
-### Backend / shared storage
-- Firebase Cloud Firestore
+Its responsibilities include:
+
+* 📥 Reading device states from Firestore
+* 📊 Displaying current device status
+* 🔧 Simulating physical hardware changes
+* 📤 Writing updated states back to Firebase
+* 🔄 Testing synchronization between the client and cloud backend
+
+This repository contains the frontend simulator built with:
+
+**⚛️ React + ⚡ Vite + 🔥 Firebase / Firestore**
 
 ---
 
-## Repository Structure
+## 🛠️ Technologies Used
+
+### 🌐 Web Simulator
+
+* ⚛️ React
+* 🟨 JavaScript
+* 🌐 HTML
+* 🎨 CSS
+* ⚡ Vite
+* 🔥 Firebase / Firestore
+
+### ☁️ Backend / Shared Storage
+
+* 🔥 Firebase Cloud Firestore
+
+---
+
+## 📁 Repository Structure
 
 ```text
 smart-home-monitoring-system/
-├── README.md
-├── simulator/
-│   └── smart-home-web/
-│       ├── index.html
-│       ├── package.json
-│       ├── vite.config.js
-│       ├── .env.example
-│       ├── public/
-│       └── src/
-│           ├── App.css
-│           ├── App.jsx
-│           ├── index.css
-│           ├── main.jsx
-│           ├── assets/
-│           ├── components/
-│           ├── firebase/
-│           ├── hooks/
-│           ├── pages/
-│           └── services/
-└── documentation/   (if added later)
+│
+├── 📄 README.md
+│
+├── 📂 simulator/
+│   └── 📂 smart-home-web/
+│       │
+│       ├── 📄 index.html
+│       ├── 📄 package.json
+│       ├── 📄 vite.config.js
+│       ├── 📄 .env.example
+│       │
+│       ├── 📂 public/
+│       │
+│       └── 📂 src/
+│           ├── 🎨 App.css
+│           ├── ⚛️ App.jsx
+│           ├── 🎨 index.css
+│           ├── ⚛️ main.jsx
+│           │
+│           ├── 📂 assets/
+│           ├── 📂 components/
+│           ├── 📂 firebase/
+│           ├── 📂 hooks/
+│           ├── 📂 pages/
+│           └── 📂 services/
+│
+└── 📂 documentation/
 ```
 
 ---
 
-## Firestore Structure
+## 🔥 Firestore Structure
 
 A typical Firestore design for this project is:
 
 ```text
 devices/
-├── bedroom_light_01/
+│
+├── 💡 bedroom_light_01/
 │   ├── name
 │   ├── type
 │   ├── status
 │   ├── floorId
 │   ├── roomId
 │   └── position
-├── bedroom_iron_01/
+│
+├── 🔥 bedroom_iron_01/
 │   ├── name
 │   ├── type
 │   ├── status
@@ -156,45 +193,61 @@ devices/
 │   ├── roomId
 │   ├── maxOnDuration
 │   └── turnedOnAt
-├── living_switch_01/
+│
+├── 🎚️ living_switch_01/
 │   ├── name
 │   ├── type
 │   ├── switchCount
 │   └── switches
-└── bedroom_camera_01/
+│
+└── 📹 bedroom_camera_01/
     ├── name
     ├── type
     ├── status
     └── cameraUri
 ```
 
-### Example multi-switch data
+### 🎚️ Example Multi-Switch Data
 
 ```json
-"switches": [
-  { "id": "switch_1", "name": "Main Light", "status": "OFF" },
-  { "id": "switch_2", "name": "Fan", "status": "ON" },
-  { "id": "switch_3", "name": "Lamp", "status": "OFF" }
-]
+{
+  "switches": [
+    {
+      "id": "switch_1",
+      "name": "Main Light",
+      "status": "OFF"
+    },
+    {
+      "id": "switch_2",
+      "name": "Fan",
+      "status": "ON"
+    },
+    {
+      "id": "switch_3",
+      "name": "Lamp",
+      "status": "OFF"
+    }
+  ]
+}
 ```
 
 ---
 
-## Setup Instructions
+## 🚀 Setup Instructions
 
-### 1. Open the simulator folder
+### 1️⃣ Open the Simulator Folder
 
 ```bash
 cd simulator/smart-home-web
 ```
 
-### 2. Install dependencies
+### 2️⃣ Install Dependencies
 
 ```bash
 npm install
 ```
 
-### 3. Configure Firebase environment variables
+### 3️⃣ Configure Firebase
 
 Copy the example environment file:
 
@@ -202,11 +255,9 @@ Copy the example environment file:
 cp .env.example .env
 ```
 
-Then update the values in `.env` with your Firebase project configuration.
+Then update `.env` with your Firebase project configuration.
 
-Example:
-
-```bash
+```env
 VITE_FIREBASE_API_KEY=your_api_key_here
 VITE_FIREBASE_AUTH_DOMAIN=your-project.firebaseapp.com
 VITE_FIREBASE_PROJECT_ID=your-project-id
@@ -215,7 +266,7 @@ VITE_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
 VITE_FIREBASE_APP_ID=your_app_id_here
 ```
 
-### 4. Run the app
+### 4️⃣ ▶️ Run the Application
 
 ```bash
 npm run dev -- --host 0.0.0.0
@@ -227,13 +278,13 @@ Then open:
 http://localhost:5173/
 ```
 
-### 5. Production build
+### 5️⃣ 📦 Production Build
 
 ```bash
 npm run build
 ```
 
-To preview the production version:
+Preview the production version:
 
 ```bash
 npm run preview -- --host 0.0.0.0
@@ -241,40 +292,71 @@ npm run preview -- --host 0.0.0.0
 
 ---
 
-## Firebase Configuration Notes
+## 🔐 Firebase Configuration Notes
 
-- Use the same Firebase project for all connected apps.
-- Enable Cloud Firestore.
-- Configure proper Firestore rules for read/write access.
-- Never commit private credentials or secret keys to GitHub.
-
----
-
-## Testing Scenarios
-
-The system should be tested for the following synchronization workflows:
-
-1. Web simulator changes a device status and the client reflects the update.
-2. Client changes a device and the simulator updates automatically.
-3. Multi-switch control updates only the selected switch.
-4. Iron exceeds the maximum allowed ON duration and turns OFF automatically.
-5. Camera state updates correctly between ONLINE, OFFLINE, and DISCONNECTED.
-6. Scheduled light behavior triggers according to configured times.
+* 🔥 Use the **same Firebase project** for all connected applications.
+* ☁️ Enable **Cloud Firestore**.
+* 🛡️ Configure appropriate Firestore read/write rules.
+* 🚫 Never commit private credentials or secret keys to GitHub.
+* 🔑 Store Firebase configuration values in `.env`.
 
 ---
 
-## Team Information
+## 🧪 Testing Scenarios
 
-This project is developed as part of the SCS 3311 coursework.
+The system should be tested using the following synchronization workflows:
 
-- Project: Smart Home Monitoring & Control System
-- Course: SCS 3311 – Mobile Application Design & Development
-- Team Size: 2 Members
-
-> Replace the team details with the actual members of your group if needed.
+* [ ] 🔄 Web simulator changes a device status → client reflects the update.
+* [ ] 📱 Client changes a device → simulator updates automatically.
+* [ ] 🎚️ Multi-switch control updates only the selected switch.
+* [ ] 🔥 Iron exceeds maximum ON duration → automatically turns OFF.
+* [ ] 🚨 Iron safety alert is generated correctly.
+* [ ] 📹 Camera state changes correctly between ONLINE, OFFLINE, and DISCONNECTED.
+* [ ] ⏰ Scheduled light behavior triggers according to configured times.
+* [ ] ☁️ Firestore updates are synchronized in real time.
 
 ---
 
-## Final Note
+## 👥 Team Information
 
-This repository focuses on the web-based smart-home simulator and its Firebase integration. If the Android mobile client is developed separately, it should connect to the same Firebase project to maintain real-time synchronization across the full system.
+This project is developed as part of the **SCS 3311 coursework**.
+
+| 📌               | Details                                            |
+| ---------------- | -------------------------------------------------- |
+| 🏠 **Project**   | Smart Home Monitoring & Control System             |
+| 📚 **Course**    | SCS 3311 – Mobile Application Design & Development |
+| 👥 **Team Size** | 2 Members                                          |
+
+> ✏️ Replace the team details with the actual members of your group.
+
+---
+
+## 🎯 Project Goal
+
+The main goal of this project is to demonstrate how a **mobile application, cloud database, and simulated smart-home hardware** can work together to provide real-time monitoring and control.
+
+```text
+📱 Mobile Application
+        ↕
+   ☁️ Firebase
+        ↕
+🖥️ Hardware Simulator
+        ↓
+🏠 Smart Home Devices
+```
+
+---
+
+## 📝 Final Note
+
+This repository focuses on the **Web Hardware Simulator** and its Firebase integration.
+
+If the Android mobile client is developed separately, it should connect to the **same Firebase project** so that device states remain synchronized across the complete smart-home system.
+
+---
+
+## 🏠 Smart Home Monitoring & Control System
+
+**Built with ❤️ using React, Vite & Firebase**
+
+> 🎓 **SCS 3311 – Mobile Application Design & Development**
