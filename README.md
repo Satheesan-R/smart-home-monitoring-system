@@ -321,11 +321,6 @@ The system should be tested using the following synchronization workflows:
 
 This project is developed as part of the **SCS 3311 coursework**.
 
-| 📌               | Details                                            |
-| ---------------- | -------------------------------------------------- |
-| 🏠 **Project**   | Smart Home Monitoring & Control System             |
-| 📚 **Course**    | SCS 3311 – Mobile Application Design & Development |
-
 | 👤 | Team Member |
 |---|---|
 | 🧑‍💻 **Member 01** | **R. Satheesan** |
